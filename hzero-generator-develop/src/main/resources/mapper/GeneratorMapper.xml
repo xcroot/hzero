@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hzero.generator.mapper.GeneratorMapper">
+
+	<select id="queryList" resultType="map">
+		SELECT
+		  t.currentSchema,
+		  t.tableSchema,
+		  t.tableName,
+		  t.engine,
+		  t.tableComment,
+		  t.createTime
+		FROM
+		    (
+		        SELECT
+		            (SELECT DATABASE()) currentSchema,
+		            table_schema tableSchema,
+		            concat(table_schema,'.',table_name) tableName,
+		            engine,
+		            table_comment tableComment,
+		            create_time createTime
+		        FROM
+		            information_schema.TABLES
+		        WHERE
+		            table_schema NOT IN (
+		                'information_schema',
+		                'performance_schema',
+		                'mysql',
+		                'sys'
+		            )
+		          AND table_name NOT IN ('databasechangelog','databasechangeloglock')
+		    ) t
+		 WHERE (t.currentSchema IS NULL OR t.tableSchema = (SELECT DATABASE()))
+		<if test="tableName != null and tableName.trim() != ''">
+			and t.tableName like concat('%', #{tableName}, '%')
+		</if>
+		order by t.createTime desc
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="queryTotal" resultType="int">
+		select count(*) FROM
+            (
+                SELECT
+                    (SELECT DATABASE()) currentSchema,
+                    table_schema tableSchema,
+                    concat(table_schema,'.',table_name) tableName
+                FROM
+                    information_schema. TABLES
+                WHERE
+                    table_schema NOT IN (
+                        'information_schema',
+                        'performance_schema',
+                        'mysql',
+                        'sys'
+                    )
+                  AND table_name NOT IN ('databasechangelog','databasechangeloglock')
+            ) t
+         WHERE (t.currentSchema IS NULL OR t.tableSchema = (SELECT DATABASE()))
+		<if test="tableName != null and tableName.trim() != ''">
+			and t.tableName like concat('%', #{tableName}, '%')
+		</if>
+	</select>
+
+	<select id="queryTable" resultType="map">
+		select table_name tableName,
+		engine, table_comment tableComment, create_time createTime from
+		information_schema.tables
+		where concat(table_schema,'.',table_name) = #{tableName}
+	</select>
+
+	<select id="queryColumns" resultType="map">
+	  select column_name columnName, 
+             data_type dataType,
+             column_type columnType,
+			 CHARACTER_MAXIMUM_LENGTH columnSize,
+             IFNULL(column_default,'NULL') columnDefault, 
+             column_comment columnComment,
+             column_key columnKey, 
+             extra, IS_NULLABLE nullAble 
+		from information_schema.columns
+        where concat(table_schema,'.',table_name) = #{tableName}
+	   order by ordinal_position
+	</select>
+	
+	<select id="queryIndexs" resultType="map">
+		SELECT
+			   CASE
+
+				   WHEN
+					   isi.`NAME` = 'PRIMARY' THEN
+					   CONCAT(SUBSTRING_INDEX(ist.NAME, '/', -1), '_pk') ELSE isi.`NAME`
+					   END indexName,
+			   CONCAT( isi.TYPE, '' ) indexType,
+			   isf.`NAME` indexFiled
+		FROM
+			 information_schema.INNODB_SYS_INDEXES isi,
+			 information_schema.INNODB_SYS_TABLES ist,
+			 information_schema.INNODB_SYS_FIELDS isf
+		WHERE
+				isi.TABLE_ID = ist.TABLE_ID
+		  AND isi.INDEX_ID = isf.INDEX_ID
+		  AND REPLACE(ist.`NAME`,'/','.') = #{tableName}
+		ORDER BY
+				 isi.`NAME`
+    </select>
+
+	<update id="executeDDL" parameterType="java.lang.String">
+		${sql}
+	</update>
+
+</mapper>

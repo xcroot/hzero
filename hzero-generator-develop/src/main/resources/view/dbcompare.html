@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HZERO开发助手</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="panel panel-default">
+			<form class="form-horizontal">
+				<div class="form-group">
+				    <div class="col-sm-2 control-label">来源环境</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" @change="changeSourceEnv" v-model="info.sourceEnv">
+                        <option value="dev">开发环境</option>
+                        <option value="tst">测试环境</option>
+                        <option value="uat">UAT环境</option>
+                        <option value="prd">生产环境</option>
+                      </select>
+                    </div>
+				</div>
+				<div class="form-group">
+                    <div class="col-sm-2 control-label">来源数据库</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" v-model="info.sourceDB">
+						    　<option v-for="item in sourceDBList">{{ item }}</option>
+						</select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">目标环境</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" @change="changeTargetEnv" v-model="info.targetEnv">
+                        <option value="dev">开发环境</option>
+                        <option value="tst">测试环境</option>
+                        <option value="uat">UAT环境</option>
+                        <option value="prd">生产环境</option>
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">目标数据库</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" v-model="info.targetDB">
+                            　                                       <option v-for="item in targetDBList">{{ item }}</option>
+                        </select>
+                    </div>
+                </div>
+				<div class="form-group">
+				    <div class="col-sm-2 control-label"></div>
+					<input type="button" class="btn btn-primary" @click="compare" value="生成对比脚本" />
+				</div>
+			</form>
+			<form class="form-horizontal" id="uploadForm" name="uploadForm">
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">更新环境</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="updateEnv" name="updateEnv" @change="changeUpdateEnv" v-model="info.updateEnv">
+                        <option value="dev">开发环境</option>
+                        <option value="tst">测试环境</option>
+                        <option value="uat">UAT环境</option>
+                        <option value="prd">生产环境</option>
+                      </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label">更新数据库</div>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="updateDB" name="updateDB" v-model="info.updateDB">
+                            　<option v-for="item in updateDBList">{{ item }}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-2 control-label"></div>
+                  <input type="file" id="file" name="file" v-model="info.file">
+                  <div class="col-sm-2 control-label"></div>
+                  <p class="help-block">数据库差异对比XML脚本文件</p>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-2 control-label"></div>
+                    <input type="button" class="btn btn-primary" @click="dbUpdate" value="数据库更新" />
+                </div>
+            </form>
+		</div>
+	</div>
+	<script src="libs/jquery.min.js"></script>
+	<script src="plugins/layer/layer.js"></script>
+	<script src="libs/bootstrap.min.js"></script>
+	<script src="libs/vue.min.js"></script>
+	<script src="plugins/jqgrid/grid.locale-cn.js"></script>
+	<script src="plugins/jqgrid/jquery.jqGrid.min.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/dbcompare.js"></script>
+</body>
+</html>

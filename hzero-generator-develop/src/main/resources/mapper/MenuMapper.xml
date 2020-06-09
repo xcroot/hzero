@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.generator.scan.mapper.MenuMapper">
+
+    <resultMap id="MenuMap" type="org.hzero.generator.scan.domain.Menu">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="h_permission_type" property="permissionType"/>
+        <result column="h_controller_type" property="controllerType"/>
+        <result column="h_quick_index" property="quickIndex"/>
+        <result column="fd_level" property="level"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="type" property="type"/>
+        <result column="sort" property="sort"/>
+        <result column="is_default" property="isDefault"/>
+        <result column="icon" property="icon"/>
+        <result column="route" property="route"/>
+        <result column="h_custom_flag" property="customFlag"/>
+        <result column="h_tenant_id" property="tenantId"/>
+        <result column="h_enabled_flag" property="enabledFlag"/>
+        <result column="h_description" property="description"/>
+        <result column="h_level_path" property="levelPath"/>
+        <result column="h_virtual_flag" property="virtualFlag"/>
+    </resultMap>
+
+    <resultMap id="permissionMap" type="org.hzero.generator.scan.domain.Permission">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="path" property="path"/>
+        <result column="method" property="method"/>
+        <result column="fd_level" property="level"/>
+        <result column="description" property="description"/>
+        <result column="action" property="action"/>
+        <result column="fd_resource" property="resource"/>
+        <result column="public_access" property="publicAccess"/>
+        <result column="login_access" property="loginAccess"/>
+        <result column="sign_access" property="signAccess"/>
+        <result column="is_within" property="within"/>
+        <result column="service_name" property="serviceName"/>
+        <result column="tag" property="tag"/>
+    </resultMap>
+
+    <resultMap id="lovMap" type="org.hzero.generator.scan.domain.vo.Lov">
+        <id property="lovId" column="lov_id"/>
+        <result property="lovCode" column="lov_code"/>
+        <result property="lovTypeCode" column="lov_type_code"/>
+        <result property="lovName" column="lov_name"/>
+        <result property="tenantId" column="tenant_id"/>
+    </resultMap>
+    <update id="updatePermissionType">
+        update iam_menu set h_permission_type = #{menu.permissionType}, name = #{menu.name} where id = #{menu.id}
+    </update>
+
+    <select id="getMenuById" resultMap="MenuMap">
+        select id, code, name, h_permission_type, h_controller_type, h_quick_index, fd_level, parent_id, type, sort,
+            is_default, icon, route, h_custom_flag, h_tenant_id, h_enabled_flag, h_description, h_level_path, h_virtual_flag
+        from iam_menu
+            where id = #{id}
+    </select>
+    <select id="selectOne" resultMap="permissionMap">
+        select id,code,path,method,fd_level,description,action,fd_resource,public_access,login_access,is_within,service_name,tag
+        from iam_permission
+        where fd_level = #{permission.level}
+        and method = #{permission.method}
+        and path = #{permission.path}
+        and service_name = #{permission.serviceName}
+    </select>
+
+    <select id="selectMenuPermissionSet" resultMap="MenuMap">
+        select
+        ps.id,
+        ps.code,
+        ps.name,
+        ps.fd_level,
+        ps.parent_id,
+        ps.type,
+        ps.sort,
+        ps.is_default,
+        ps.icon,
+        ps.route,
+        ps.h_custom_flag,
+        ps.h_tenant_id,
+        ps.h_description,
+        ps.h_enabled_flag,
+        ps.h_virtual_flag,
+        ps.h_controller_type,
+        ps.h_level_path,
+        ps.h_permission_type
+        from iam_menu ps
+        where ps.type = 'ps'
+        and ps.h_tenant_id = #{searchDTO.tenantId}
+        and ps.parent_id = #{searchDTO.parentMenuId}
+        order by ps.id
+    </select>
+    <select id="selectPermissionSetPermissions" resultMap="permissionMap">
+    select
+        ip.id,
+        ip.code,
+        ip.path,
+        ip.method,
+        ip.login_access,
+        ip.public_access,
+        ip.sign_access,
+        ip.description,
+        ip.service_name
+        from iam_menu_permission imp
+        join iam_menu ps on ps.id = imp.menu_id
+        join iam_permission ip on ip.code = imp.permission_code
+        where imp.menu_id = #{permissionSetId}
+        and ps.type = 'ps'
+        and ps.fd_level = ip.fd_level
+        and (ps.h_tenant_id = 0 or ps.h_tenant_id = #{tenantId})
+    </select>
+    <select id="selectLovByCodes" resultMap="lovMap">
+        select
+        hl.lov_id,
+        hl.lov_code,
+        hl.lov_type_code,
+        hl.tenant_id
+        from hpfm_lov hl
+        where (hl.tenant_id = 0 or hl.tenant_id = #{tenantId})
+        and hl.lov_code in
+        <foreach collection="codes" item="code" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </select>
+    <select id="selectPermissionByCodes" resultMap="permissionMap">
+        select
+        ip.id,
+        ip.code,
+        ip.path,
+        ip.method,
+        ip.fd_level,
+        ip.login_access,
+        ip.public_access,
+        ip.sign_access,
+        ip.description,
+        ip.service_name
+        from iam_permission ip
+        where ip.code in
+        <foreach collection="permissionCodes" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="selectMenuPermissionCount" resultType="java.lang.Integer">
+        select count(1) from iam_menu_permission where menu_id = #{menuPermission.menuId} and permission_code = #{menuPermission.permissionCode}
+    </select>
+    <select id="getServiceName" parameterType="string" resultType="java.lang.String">
+        select service_code from hadm_service_route where name = #{name}
+    </select>
+
+    <insert id="insertSelective" parameterType="org.hzero.generator.scan.domain.Menu" useGeneratedKeys="true" keyColumn="id" keyProperty="menu.id">
+        insert into iam_menu (code, name, h_permission_type, h_controller_type, h_quick_index, fd_level, parent_id, type, sort,
+            is_default, icon, route, h_custom_flag, h_tenant_id, h_enabled_flag, h_description, h_level_path, h_virtual_flag)
+        values (#{menu.code}, #{menu.name}, #{menu.permissionType}, #{menu.controllerType}, #{menu.quickIndex}, #{menu.level}, #{menu.parentId},
+            #{menu.type}, #{menu.sort}, #{menu.isDefault}, #{menu.icon}, #{menu.route}, #{menu.customFlag}, #{menu.tenantId}, #{menu.enabledFlag},
+            #{menu.description}, #{menu.levelPath}, #{menu.virtualFlag})
+    </insert>
+    <insert id="insertMenuPermission">
+        insert into iam_menu_permission (menu_id, permission_code)
+        values (#{mp.menuId}, #{mp.permissionCode})
+    </insert>
+
+    <insert id="insertMenuTl">
+        insert into iam_menu_tl (id, lang, name) values
+        <foreach collection="lang" separator=","  item="item">
+            (#{id}, #{item}, #{name})
+        </foreach>
+    </insert>
+
+</mapper>

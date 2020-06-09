@@ -1,0 +1,10 @@
+package ${package}.app.service;
+
+/**
+ * ${comments}应用服务
+ *
+ * @author ${author} ${datetime}
+ */
+public interface ${className}Service {
+
+}

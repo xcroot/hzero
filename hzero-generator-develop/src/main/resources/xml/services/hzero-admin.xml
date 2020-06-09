@@ -1,0 +1,698 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--name：服务名，order：排序，description：描述-->
+<service name="hzero-admin" order="20" description="平台治理服务">
+    <excel name="hzero-iam-menu" description="菜单数据" fileName="hzero-iam-menu" schema="hzero_platform">
+        <sheet name="iam-menu" version="saas" description="菜单SAAS版">
+            <table name="iam_menu" description="菜单-saas">
+                <sql>SELECT
+                    id,
+                    code,
+                    name,
+                    h_quick_index,
+                    fd_level,
+                    parent_id,
+                    type,
+                    sort,
+                    is_default,
+                    icon,
+                    route,
+                    h_custom_flag,
+                    h_tenant_id,
+                    h_level_path,
+                    h_virtual_flag,
+                    h_controller_type,
+                    h_permission_type,
+                    h_description,
+                    h_enabled_flag,
+                    CATEGORY
+                    FROM
+                    iam_menu
+                    WHERE
+                    (CODE LIKE 'hzero.site.config%'
+                    OR CODE LIKE 'hzero.config%')
+                    AND h_enabled_flag =1
+                    and h_tenant_id=0
+                    order by h_level_path
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>code,fd_level,h_tenant_id</unique>
+                <lang>
+                    <field>name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <reference>
+                    <field>parent_id</field>
+                    <tableName>iam_menu</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+        </sheet>
+        <sheet name="iam-menu" version="op" description="菜单OP版">
+            <table name="iam_menu" description="菜单-op">
+                <sql>SELECT
+                    id,
+                    code,
+                    name,
+                    h_quick_index,
+                    fd_level,
+                    parent_id,
+                    type,
+                    sort,
+                    is_default,
+                    icon,
+                    route,
+                    h_custom_flag,
+                    h_tenant_id,
+                    h_level_path,
+                    h_virtual_flag,
+                    h_controller_type,
+                    h_permission_type,
+                    h_description,
+                    h_enabled_flag,
+                    CATEGORY
+                    FROM
+                    iam_menu
+                    WHERE
+                    CODE LIKE 'hzero.config%'
+                    AND h_enabled_flag =1
+                    and h_tenant_id=0
+                    order by h_level_path
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>code,fd_level,h_tenant_id</unique>
+                <lang>
+                    <field>name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <reference>
+                    <field>parent_id</field>
+                    <tableName>iam_menu</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+        </sheet>
+        <sheet name="iam_menu_permission" description="菜单权限">
+            <table name="iam_menu_permission" description="菜单权限">
+                <sql>SELECT
+                    id,
+                    menu_id,
+                    permission_code
+                    FROM
+                    iam_menu_permission
+                    WHERE
+                    menu_id in (
+                    SELECT
+                    id
+                    FROM
+                    iam_menu
+                    WHERE
+                    (CODE LIKE 'hzero.site.config%'
+                    OR CODE LIKE 'hzero.config%')
+                    AND h_enabled_flag =1
+                    and h_tenant_id=0
+                    ) AND permission_code REGEXP '^[^0-9]{3,}$'
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>menu_id,permission_code</unique>
+                <reference>
+                    <field>menu_id</field>
+                    <sheetName>iam-menu</sheetName>
+                    <tableName>iam_menu</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+        </sheet>
+        <sheet name="iam_role_permission" version="saas" description="角色权限">
+            <table name="iam_role" description="角色">
+                <sql>SELECT
+                    id,
+                    NAME,
+                    CODE,
+                    description,
+                    fd_level,
+                    h_tenant_id,
+                    h_inherit_role_id,
+                    h_parent_role_id,
+                    h_parent_role_assign_level,
+                    h_parent_role_assign_level_val,
+                    is_enabled,
+                    is_modified,
+                    is_enable_forbidden,
+                    is_built_in,
+                    is_assignable,
+                    h_level_path,
+                    h_inherit_level_path,
+                    created_by_tenant_id,
+                    tpl_role_name
+                    FROM
+                    iam_role
+                    WHERE
+                    h_tenant_id = 0
+                    AND is_enabled = 1
+                    AND CODE IN ( 'role/site/default/administrator', 'role/organization/default/administrator', 'role/organization/default/template/administrator' )
+                    AND is_built_in=1
+                    order by id asc
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>
+                    code,h_tenant_id,h_parent_role_id,h_parent_role_assign_level,created_by_tenant_id
+                </unique>
+                <lang>
+                    <field>name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <lang>
+                    <field>tpl_role_name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <reference>
+                    <field>h_parent_role_id</field>
+                    <tableName>iam_role</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+            <table name="iam_role_permission" description="角色权限">
+                <sql>SELECT
+                    id,
+                    role_id,
+                    permission_id,
+                    h_create_flag,
+                    h_inherit_flag,
+                    type
+                    FROM iam_role_permission
+                    WHERE
+                    type = 'PS' and
+                    role_id in (
+                    SELECT
+                    id
+                    FROM
+                    iam_role
+                    WHERE
+                    h_tenant_id = 0
+                    AND is_enabled = 1
+                    AND CODE IN ( 'role/site/default/administrator', 'role/organization/default/administrator', 'role/organization/default/template/administrator' )
+                    AND is_built_in=1
+                    ) AND
+                    permission_id in (
+                    SELECT
+                    id
+                    FROM
+                    iam_menu
+                    WHERE
+                    (CODE LIKE 'hzero.site.config%'
+                    OR CODE LIKE 'hzero.config%')
+                    AND h_enabled_flag =1
+                    and h_tenant_id=0)
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>
+                    role_id,permission_id,type
+                </unique>
+                <reference>
+                    <field>role_id</field>
+                    <tableName>iam_role</tableName>
+                    <columnName>id</columnName>
+                </reference>
+                <reference>
+                    <field>permission_id</field>
+                    <sheetName>iam-menu</sheetName>
+                    <tableName>iam_menu</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+        </sheet>
+        <sheet name="iam_role_permission" version="op" description="角色权限">
+            <table name="iam_role" description="角色">
+                <sql>SELECT
+                    id,
+                    NAME,
+                    CODE,
+                    description,
+                    fd_level,
+                    h_tenant_id,
+                    h_inherit_role_id,
+                    h_parent_role_id,
+                    h_parent_role_assign_level,
+                    h_parent_role_assign_level_val,
+                    is_enabled,
+                    is_modified,
+                    is_enable_forbidden,
+                    is_built_in,
+                    is_assignable,
+                    h_level_path,
+                    h_inherit_level_path,
+                    created_by_tenant_id,
+                    tpl_role_name
+                    FROM
+                    iam_role
+                    WHERE
+                    h_tenant_id = 0
+                    AND is_enabled = 1
+                    AND CODE IN ( 'role/site/default/administrator', 'role/organization/default/administrator', 'role/organization/default/template/administrator' )
+                    AND fd_level !='site'
+                    AND is_built_in=1
+                    order by id asc
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>
+                    code,h_tenant_id,h_parent_role_id,h_parent_role_assign_level,created_by_tenant_id
+                </unique>
+                <lang>
+                    <field>name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <lang>
+                    <field>tpl_role_name</field>
+                    <pkName>id</pkName>
+                </lang>
+                <reference>
+                    <field>h_parent_role_id</field>
+                    <tableName>iam_role</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+            <table name="iam_role_permission" description="角色权限">
+                <sql>SELECT
+                    id,
+                    role_id,
+                    permission_id,
+                    h_create_flag,
+                    h_inherit_flag,
+                    type
+                    FROM iam_role_permission
+                    WHERE
+                    type = 'PS' and
+                    role_id in (
+                    SELECT
+                    id
+                    FROM
+                    iam_role
+                    WHERE
+                    h_tenant_id = 0
+                    AND is_enabled = 1
+                    AND CODE IN ( 'role/site/default/administrator', 'role/organization/default/administrator', 'role/organization/default/template/administrator' )
+                    AND is_built_in=1
+                    ) AND
+                    permission_id in (
+                    SELECT
+                    id
+                    FROM
+                    iam_menu
+                    WHERE
+                    (CODE LIKE 'hzero.config%')
+                    AND h_enabled_flag =1
+                    and h_tenant_id=0)
+                </sql>
+                <id>id</id>
+                <cited>id</cited>
+                <unique>
+                    role_id,permission_id,type
+                </unique>
+                <reference>
+                    <field>role_id</field>
+                    <tableName>iam_role</tableName>
+                    <columnName>id</columnName>
+                </reference>
+                <reference>
+                    <field>permission_id</field>
+                    <sheetName>iam-menu</sheetName>
+                    <tableName>iam_menu</tableName>
+                    <columnName>id</columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+    <excel name="hzero-platform-lov" description="值集数据" fileName="hzero-platform-lov" schema="hzero_platform">
+        <sheet name="lov" description="值集数据">
+            <table name="hpfm_lov" description="LOV表">
+                <sql>SELECT
+                    lov_id,
+                    lov_code,
+                    lov_type_code,
+                    route_name,
+                    lov_name,
+                    description,
+                    tenant_id,
+                    parent_lov_code,
+                    parent_tenant_id,
+                    custom_sql,
+                    custom_url,
+                    value_field,
+                    display_field,
+                    must_page_flag,
+                    enabled_flag,
+                    translation_sql
+                    FROM
+                    hpfm_lov
+                    WHERE
+                    lov_code LIKE 'HADM%'
+                    AND enabled_flag =1
+                    and tenant_id=0
+                </sql>
+                <id>lov_id</id>
+                <cited>lov_id</cited>
+                <unique>lov_code,tenant_id</unique>
+                <lang>
+                    <field>lov_name</field>
+                    <pkName>lov_id</pkName>
+                </lang>
+                <lang>
+                    <field>description</field>
+                    <pkName>lov_id</pkName>
+                </lang>
+            </table>
+            <table name="hpfm_lov_value" description="LOV独立值集表">
+                <sql>SELECT
+                    lov_value_id,
+                    lov_id,
+                    lov_code,
+                    value,
+                    meaning,
+                    description,
+                    tenant_id,
+                    tag,
+                    order_seq,
+                    parent_value,
+                    start_date_active,
+                    end_date_active,
+                    enabled_flag
+                    FROM
+                    hpfm_lov_value
+                    WHERE
+                    lov_code LIKE 'HADM%'
+                    AND enabled_flag =1
+                    AND tenant_id =0
+                </sql>
+                <id>lov_value_id</id>
+                <unique>lov_id,value,tenant_id,parent_value</unique>
+                <lang>
+                    <field>meaning</field>
+                    <pkName>lov_value_id</pkName>
+                </lang>
+                <lang>
+                    <field>description</field>
+                    <pkName>lov_value_id</pkName>
+                </lang>
+                <type>
+                    <field>start_date_active</field>
+                    <type>DATE</type>
+                </type>
+                <type>
+                    <field>end_date_active</field>
+                    <type>DATE</type>
+                </type>
+                <reference>
+                    <field>lov_id</field>
+                    <tableName>hpfm_lov</tableName>
+                    <columnName>lov_id</columnName>
+                </reference>
+            </table>
+            <table name="hpfm_lov_view_header" description="值集查询视图头表">
+                <sql>SELECT
+                    view_header_id,
+                    view_code,
+                    view_name,
+                    lov_id,
+                    tenant_id,
+                    value_field,
+                    display_field,
+                    title,
+                    width,
+                    height,
+                    page_size,
+                    delay_load_flag,
+                    children_field_name,
+                    enabled_flag
+                    FROM
+                    hpfm_lov_view_header
+                    WHERE
+                    (view_code LIKE 'HADM%' OR view_code LIKE 'HCNF%')
+                    AND enabled_flag =1
+                    AND tenant_id=0
+                </sql>
+                <id>view_header_id</id>
+                <cited>view_header_id</cited>
+                <unique>view_code,tenant_id</unique>
+                <lang>
+                    <field>view_name</field>
+                    <pkName>view_header_id</pkName>
+                </lang>
+                <lang>
+                    <field>title</field>
+                    <pkName>view_header_id</pkName>
+                </lang>
+                <reference>
+                    <field>lov_id</field>
+                    <tableName>hpfm_lov</tableName>
+                    <columnName>lov_id</columnName>
+                </reference>
+            </table>
+            <table name="hpfm_lov_view_line" description="值集查询视图行表">
+                <sql>SELECT
+                    view_line_id,
+                    view_header_id,
+                    tenant_id,
+                    lov_id,
+                    display,
+                    order_seq,
+                    field_name,
+                    query_field_flag,
+                    table_field_flag,
+                    table_field_width,
+                    enabled_flag
+                    FROM
+                    hpfm_lov_view_line
+                    WHERE
+                    enabled_flag = 1
+                    AND tenant_id = 0
+                    AND view_header_id IN (
+                    SELECT
+                    view_header_id
+                    FROM
+                    hpfm_lov_view_header
+                    WHERE
+                    (view_code LIKE 'HADM%' OR view_code LIKE 'HCNF%')
+                    AND enabled_flag =1
+                    AND tenant_id=0)
+                </sql>
+                <id>view_line_id</id>
+                <cited>view_line_id</cited>
+                <unique>view_header_id,field_name</unique>
+                <lang>
+                    <field>display</field>
+                    <pkName>view_line_id</pkName>
+                </lang>
+                <reference>
+                    <field>view_header_id</field>
+                    <tableName>hpfm_lov_view_header</tableName>
+                    <columnName>view_header_id</columnName>
+                </reference>
+                <reference>
+                    <field>lov_id</field>
+                    <tableName>hpfm_lov</tableName>
+                    <columnName>lov_id</columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+    <excel name="hzero-prompt" description="多语言" fileName="hzero-prompt" schema="hzero_platform">
+        <!--name：名称，description：页面显示名称和Excel页名称-->
+        <sheet name="prompt" description="多语言数据">
+            <!--name：表名，description：描述-->
+            <table name="hpfm_prompt" description="多语言配置">
+                <!--sql语句，包含需要查询的字段和where条件，主表别名为 t -->
+                <sql>SELECT
+                    prompt_id,
+                    tenant_id,
+                    prompt_key,
+                    prompt_code,
+                    lang,
+                    description
+                    FROM
+                    hpfm_prompt
+                    WHERE
+                    tenant_id = 0
+                    AND prompt_key LIKE 'hadm%'
+                    AND lang != 'ja_JP'
+                </sql>
+                <!--主键，默认自增，保持原ID只需加个*号，例如 <id>*tenant_id</id> -->
+                <id>prompt_id</id>>
+                <!--唯一性索引-->
+                <unique>tenant_id,prompt_key,prompt_code,lang</unique>
+            </table>
+        </sheet>
+    </excel>
+    <excel name="hzero-platform-permission-range" description="数据权限" fileName="hzero-platform-permission-range"
+           schema="hzero_platform">
+        <sheet name="permission" description="屏蔽规则">
+            <table name="hpfm_permission_rule" description="屏蔽规则">
+                <sql>SELECT
+                    rule_id,
+                    rule_code,
+                    rule_type_code,
+                    rule_name,
+                    description,
+                    sql_value,
+                    tenant_id,
+                    enabled_flag
+                    FROM
+                    hpfm_permission_rule
+                    WHERE
+                    enabled_flag = 1
+                    AND tenant_id = 0
+                    AND rule_id IN (
+                    SELECT
+                    rule_id
+                    FROM
+                    hpfm_permission_rel
+                    WHERE
+                    range_id IN ( SELECT range_id FROM hpfm_permission_range WHERE tenant_id = 0 AND enabled_flag = 1 AND service_name = 'hzero-admin' ))
+                </sql>
+                <id>rule_id</id>
+                <cited>rule_id</cited>
+                <unique>rule_code,tenant_id</unique>
+            </table>
+            <table name="hpfm_permission_range" description="屏蔽范围">
+                <sql>SELECT
+                    range_id,
+                    custom_rule_flag,
+                    table_name,
+                    sql_id,
+                    description,
+                    tenant_id,
+                    service_name,
+                    enabled_flag
+                    FROM
+                    hpfm_permission_range
+                    WHERE
+                    enabled_flag = 1
+                    AND tenant_id = 0
+                    AND service_name = 'hzero-admin'
+                </sql>
+                <id>range_id</id>
+                <cited>range_id</cited>
+                <unique>table_name,sql_id,tenant_id,service_name</unique>
+            </table>
+            <table name="hpfm_permission_rel" description="屏蔽范围规则关系">
+                <sql>SELECT
+                    permission_rel_id,
+                    range_id,
+                    rule_id,
+                    editable_flag
+                    FROM
+                    hpfm_permission_rel
+                    WHERE
+                    range_id IN (
+                    SELECT
+                    range_id
+                    FROM
+                    hpfm_permission_range
+                    WHERE
+                    enabled_flag = 1
+                    AND tenant_id = 0
+                    AND service_name = 'hzero-admin'
+                    )
+                </sql>
+                <id>permission_rel_id</id>
+                <cited>permission_rel_id</cited>
+                <unique>range_id,rule_id</unique>
+                <reference>
+                    <field>range_id</field>
+                    <tableName>hpfm_permission_range</tableName>
+                    <columnName>range_id</columnName>
+                </reference>
+                <reference>
+                    <field>rule_id</field>
+                    <tableName>hpfm_permission_rule</tableName>
+                    <columnName>rule_id</columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+    <excel name="hzero-service-route" description="服务路由" fileName="hzero-service-route" schema="hzero_admin">
+        <sheet name="route" description="路由">
+            <table name="hadm_service" description="服务">
+                <sql>SELECT
+                    service_id,
+                    service_code,
+                    service_name,
+                    service_logo
+                    FROM
+                    hadm_service
+                    WHERE
+                    service_code IN (
+                    'hzero-asgard',
+                    'hzero-config',
+                    'hzero-file',
+                    'hzero-iam',
+                    'hzero-import',
+                    'hzero-interface',
+                    'hzero-message',
+                    'hzero-oauth',
+                    'hzero-platform',
+                    'hzero-portal',
+                    'hzero-report',
+                    'hzero-scheduler',
+                    'hzero-swagger',
+                    'hzero-transfer',
+                    'hzero-workflow-plus',
+                    'hzero-nlp',
+                    'hzero-pay',
+                    'hzero-monitor',
+                    'hzero-im',
+                    'hzero-open',
+                    'hzero-gateway',
+                    'hzero-ocr',
+                    'hzero-invoice',
+                    'hzero-admin',
+                    'hzero-hap',
+                    'hzero-iot',
+                    'hzero-search',
+                    'hzero-dpm',
+                    'hzero-modeler',
+                    'hzero-ebank',
+                    'hzero-charge',
+                    'hzero-lowcode'
+                    )
+                    ORDER BY
+                    service_id
+                </sql>
+                <id>service_id</id>
+                <cited>service_id</cited>
+                <unique>service_code</unique>
+                <lang>
+                    <field>service_name</field>
+                    <pkName>service_id</pkName>
+                </lang>
+            </table>
+            <table name="hadm_service_route" description="服务路由配置">
+                <sql>SELECT
+                    service_route_id,
+                    service_id,
+                    service_code,
+                    name,
+                    path,
+                    url,
+                    strip_prefix,
+                    custom_sensitive_headers,
+                    sensitive_headers
+                    FROM
+                    hadm_service_route
+                </sql>
+                <id>service_route_id</id>
+                <unique>name,path</unique>
+                <reference>
+                    <field>service_id</field>
+                    <tableName>hadm_service</tableName>
+                    <columnName>service_id</columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+</service>

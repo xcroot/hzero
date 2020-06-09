@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.generator.export.helper.mapper.DataExportHelperMapper">
+    <select id="selectTableName" resultType="org.hzero.generator.export.helper.entity.Table">
+        SELECT
+            TABLE_SCHEMA schemaName,
+            TABLE_NAME
+        FROM
+            information_schema.`TABLES`
+        <where>
+            <if test="schemaName != null and schemaName != ''">
+                TABLE_SCHEMA = #{schemaName}
+            </if>
+            <if test="!@org.springframework.util.CollectionUtils@isEmpty(tableNamePrefixs)">
+                AND
+                <foreach collection="tableNamePrefixs" item="tableNamePrefix" open="(" close=")" separator="OR">
+                    TABLE_NAME LIKE CONCAT(#{tableNamePrefix}, '%')
+                </foreach>
+            </if>
+            <if test="!@org.springframework.util.CollectionUtils@isEmpty(excludeTableNames)">
+                AND TABLE_NAME NOT IN
+                <foreach collection="excludeTableNames" item="excludeTableName" open="(" close=")" separator=",">
+                    #{excludeTableName}
+                </foreach>
+            </if>
+            <if test="!@org.springframework.util.CollectionUtils@isEmpty(excludeTableNamePrefixs)">
+                AND
+                <foreach collection="excludeTableNamePrefixs" item="excludeTableNamePrefix" open="(" close=")" separator="AND">
+                    TABLE_NAME NOT LIKE CONCAT(#{excludeTableNamePrefix}, '%')
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectData" resultType="java.util.Map">
+        SELECT
+            *
+        FROM
+             ${schemaName}.${tableName}
+    </select>
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.generator.export.helper.mapper.LiquibaseHelperMapper">
+
+    <select id="selectData" resultType="java.util.Map">
+        SELECT
+        <foreach collection="columnList" separator="," item="column">
+            <if test="column.isMultiLang()">
+                <foreach collection="column.getLang()" separator="," item="lang">
+                    (SELECT ${column.columnName} FROM ${tableName}_tl ttl WHERE ttl.${column.pkName} =
+                    t.${column.pkName} AND ttl.lang = #{lang}) "${column.columnName}:${lang}"
+                </foreach>
+            </if>
+            <if test="!column.isMultiLang() and !column.isConstant()">
+                ${column.columnName} "${column.getColumnNameText()}"
+            </if>
+            <if test="column.isConstant()">
+                ${column.columnName} ${column.getColumnNameText()}
+            </if>
+        </foreach>
+        FROM
+        ${tableName} t
+        <if test="where != null and where != ''">
+            WHERE ${where}
+        </if>
+    </select>
+    <select id="selectSchema">
+        USE ${schemaName};
+    </select>
+</mapper>

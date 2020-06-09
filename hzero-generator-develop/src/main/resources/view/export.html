@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HZERO开发助手</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="css/layui.css">
+</head>
+<style>
+
+    .generator .layui-form-checkbox {
+        padding-top: 8px;
+    }
+
+    .generator .layui-form-checkbox i {
+        top: auto;
+    }
+
+    .generator {
+        display: flex;
+        flex-direction: column;
+    }
+
+</style>
+<body>
+<div class="layui-row">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择环境</label>
+            <div class="layui-input-block">
+                <select name="interest" lay-filter="env">
+                    <option value="dev">开发环境</option>
+                    <option value="tst">测试环境</option>
+                    <option value="uat">UAT环境</option>
+                    <option value="prd">生产环境</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-row">
+    <div class="layui-row">
+        <div class="layui-col-xs2">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" lay-demo="exportInitData">导出数据</button>
+            </div>
+        </div>
+        <div class="layui-col-xs2">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" lay-demo="virtualData">导出数据-虚拟根目录</button>
+            </div>
+        </div>
+        <div class="layui-form layui-col-xs2">
+            <select name="interest" lay-filter="version">
+                <option value="saas">SAAS版本</option>
+                <option value="op">OP版本</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-row">
+        <div class="demo-tree-more" id="data"></div>
+    </div>
+</div>
+
+<script src="libs/jquery.min.js"></script>
+<script src="libs/layui.all.js"></script>
+<script src="js/export.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+package script.db
+
+databaseChangeLog(logicalFilePath: 'script/db/${tableName}.groovy') {
+    changeSet(author: "${author}", id: "${datetime}-${tableName}") {
+        def weight = 1
+        if(helper.isSqlServer()){
+            weight = 2
+        } else if(helper.isOracle()){
+            weight = 3
+        }
+        if(helper.dbType().isSupportSequence()){
+            createSequence(sequenceName: '${tableName}_s', startValue:"1")
+        }
+        createTable(tableName: "${tableName}", remarks: "${tableComment}") {
+#foreach ($column in $columns)
+        #set($columnType = $column.dataType + '(" + ' + $column.columnSize + " * weight + " + '")')
+            column(name: "$column.columnName", type: "#if($column.dataType == "varchar")$columnType#else$column.dataType#end",#if($column.extra == "auto_increment") autoIncrement: true , #end #if($column.columnDefault != "NULL") #if($column.columnType == "datetime") defaultValueComputed:"$column.columnDefault", #else defaultValue:"$column.columnDefault", #end #end remarks: "$column.comments") #if(${pkCnt} == 1 && $pk.columnName == $column.columnName) {constraints(primaryKey: true)} #else #if($column.nullAble == 'NO'){constraints(nullable:"false")} #end #end
+
+#end
+
+        }
+#foreach ($index in $indexs)
+#if($index.indexType == "N")
+   createIndex(tableName: "$index.tableName", indexName: "$index.indexName") {
+     #foreach ($indexCol in $index.indexColumns)
+       column(name: "$indexCol")
+     #end
+   }
+#end
+#end
+
+#foreach ($index in $indexs)
+#if($index.indexType == "U" || ($index.indexType == "P" && ${pkCnt} > 1))
+        addUniqueConstraint(columnNames:"$index.indexColumn",tableName:"$index.tableName",constraintName: "$index.indexName")
+#elseif($index.indexType == "P" && ${pkCnt} > 1)
+        addPrimaryKey(columnNames:"$index.indexColumn",tableName:"$index.tableName",constraintName: "$index.indexName")
+#end
+#end
+    }
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HZERO开发助手</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="css/layui.css">
+</head>
+<style>
+
+    .generator .layui-form-checkbox {
+        padding-top: 8px;
+    }
+
+    .generator .layui-form-checkbox i {
+        top: auto;
+    }
+
+    .generator {
+        display: flex;
+        flex-direction: column;
+    }
+
+</style>
+<body>
+<div class="layui-row">
+    <div class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">选择环境</label>
+            <div class="layui-input-block">
+                <select name="interest" lay-filter="env">
+                    <option value="dev">开发环境</option>
+                    <option value="tst">测试环境</option>
+                    <option value="uat">UAT环境</option>
+                    <option value="prd">生产环境</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="layui-row">
+    <div class="layui-col-xs4">
+        <div class="layui-row">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" onclick="updateGroovy()">更新数据库</button>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-xs8">
+                <input type="text" name="title" id="groovy" placeholder="请输入根目录" class="layui-input">
+            </div>
+            <div class="layui-col-xs4">
+                <button type="button" class="layui-btn layui-btn-normal" onclick="getGroovy()">
+                    <i class="layui-icon">&#xe615;</i>
+                </button>
+            </div>
+        </div>
+        <div class="layui-form">
+            <div class="generator" id="groovyData"></div>
+        </div>
+    </div>
+    <div class="layui-col-xs4">
+        <div class="layui-row">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn" onclick="importInitData()">导入数据</button>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-col-xs8">
+                <input type="text" name="title" id="initData" placeholder="请输入根目录" class="layui-input">
+            </div>
+            <div class="layui-col-xs4">
+                <button type="button" class="layui-btn layui-btn-normal" onclick="getInitData()">
+                    <i class="layui-icon">&#xe615;</i>
+                </button>
+            </div>
+        </div>
+        <div class="layui-row">
+            <div class="layui-form">
+                <div class="generator" id="import"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="libs/jquery.min.js"></script>
+<script src="libs/layui.all.js"></script>
+<script src="js/install.js"></script>
+</body>
+</html>

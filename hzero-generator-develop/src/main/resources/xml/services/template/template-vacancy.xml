@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--name：服务名，order：排序，description：描述-->
+<service name="" order="" description="">
+    <!--name：模块名称，description：描述，fileName：文件名，schema：数据库-->
+    <excel name="" description="" fileName="" schema="">
+        <!--name：名称，description：页面显示名称和Excel页名称-->
+        <sheet name="" description="">
+            <!--name：表名，description：描述-->
+            <table name="" description="">
+                <!--sql语句，包含需要查询的字段和where条件，主表别名为 t -->
+                <sql>SELECT
+                FROM
+                WHERE 1=1
+                </sql>
+                <!--主键，默认自增，保持原ID只需加个*号，例如 <id>*id</id> -->
+                <id></id>
+                <!--引用字段-->
+                <cited></cited>
+                <!--唯一性索引-->
+                <unique></unique>
+                <!--多语言，field：多语言列，pkName：关联主键-->
+                <lang>
+                    <field></field>
+                    <pkName></pkName>
+                </lang>
+                <!--类型（可配多个），field：类型列，type：类型-->
+                <type>
+                    <field></field>
+                    <type></type>
+                </type>
+                <!--field：关联列，tableName：关联的表，columnName：关联的列-->
+                <reference>
+                    <field></field>
+                    <sheetName></sheetName>
+                    <tableName></tableName>
+                    <columnName></columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+    <excel name="" description="" fileName="" schema="">
+        <sheet name="" description="">
+            <table name="" description="">
+                <sql>select
+                from
+                where 1=1
+                </sql>
+                <id></id>
+                <cited></cited>
+                <unique></unique>
+                <!--类型（可配多个），field：类型列，type：类型-->
+                <type>
+                    <field></field>
+                    <type></type>
+                </type>
+                <reference>
+                    <field></field>
+                    <tableName></tableName>
+                    <columnName></columnName>
+                </reference>
+            </table>
+        </sheet>
+    </excel>
+</service>

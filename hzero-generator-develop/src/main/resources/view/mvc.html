@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>HZERO开发助手</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<link rel="stylesheet" href="css/bootstrap.min.css">
+<link rel="stylesheet" href="css/font-awesome.min.css">
+<link rel="stylesheet" href="plugins/jqgrid/ui.jqgrid-bootstrap.css">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+	<div id="app" v-cloak>
+		<div class="panel panel-default">
+			<form class="form-horizontal">
+				<div class="form-group">
+					<div class="col-sm-2 control-label">表过滤前缀</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="info.tablePrefix" placeholder="如:hpfm_" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">包前缀</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="info.pkg" placeholder="如:org.hzero.platform" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">代码作者</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="info.author" placeholder="汉得邮箱地址" />
+					</div>
+				</div>
+				<div class="form-group">
+				    <div class="col-sm-2 control-label"></div>
+					<input type="button" class="btn btn-primary" @click="generator" value="生成代码" />
+				</div>
+				<div class="form-group">
+					<div class="col-sm-2 control-label">表检索</div>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" v-model="q.tableName" @keyup.enter="query" placeholder="输入后回车">
+					</div>
+				</div>
+			</form>
+		</div>
+		<table id="jqGrid"></table>
+		<div id="jqGridPager"></div>
+	</div>
+	<script src="libs/jquery.min.js"></script>
+	<script src="plugins/layer/layer.js"></script>
+	<script src="libs/bootstrap.min.js"></script>
+	<script src="libs/vue.min.js"></script>
+	<script src="plugins/jqgrid/grid.locale-cn.js"></script>
+	<script src="plugins/jqgrid/jquery.jqGrid.min.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/mvc.js"></script>
+</body>
+</html>

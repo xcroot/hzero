@@ -1,0 +1,84 @@
+package ${package}.controller;
+
+import java.util.List;
+import org.hzero.core.util.Results;
+import org.hzero.core.base.BaseController;
+import ${package}.entity.${className};
+import ${package}.service.${className}Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import io.choerodon.core.domain.Page;
+import io.choerodon.mybatis.pagehelper.annotation.SortDefault;
+import io.choerodon.mybatis.pagehelper.domain.PageRequest;
+import io.choerodon.mybatis.pagehelper.domain.Sort;
+import io.swagger.annotations.ApiOperation;
+import springfox.documentation.annotations.ApiIgnore;
+
+/**
+ * ${comments} 管理 API
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@RestController("${classname}Controller.v1")
+@RequestMapping("/v1/${pathName}s")
+public class ${className}Controller extends BaseController {
+
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    /**
+     * 列表
+     */
+    @ApiOperation(value = "${comments}列表")
+    @GetMapping
+    public ResponseEntity<?> list(${className} ${classname}, @ApiIgnore @SortDefault(value = ${className}.FIELD_${pkUpperFileName},
+            direction = Sort.Direction.DESC) PageRequest pageRequest){
+        Page<${className}> list = ${classname}Service.pageAndSort(pageRequest, ${classname});
+        return Results.success(list);
+    }
+
+
+    /**
+     * 详细
+     */
+    @ApiOperation(value = "${comments}明细")
+    @RequestMapping("/{${pk.attrname}}")
+    public ResponseEntity<?> detail(@PathVariable Long ${pk.attrname}) {
+        ${className} ${classname} = ${classname}Service.selectByPrimaryKey(${pk.attrname});
+        return Results.success(${classname});
+    }
+
+    /**
+     * 创建
+     */
+    @ApiOperation(value = "创建${comments}")
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody ${className} ${classname}) {
+            ${classname}Service.insertSelective(${classname});
+        return Results.success(${classname});
+    }
+
+    /**
+     * 修改
+     */
+    @ApiOperation(value = "修改${comments}")
+    @PutMapping
+    public ResponseEntity<?> update(@RequestBody ${className} ${classname}) {
+            ${classname}Service.updateByPrimaryKeySelective(${classname});
+        return Results.success(${classname});
+    }
+
+    /**
+     * 删除
+     */
+    @ApiOperation(value = "删除${comments}")
+    @DeleteMapping("/{${pk.attrname}}")
+    public ResponseEntity<?> remove(@PathVariable Long ${pk.attrname}) {
+            ${classname}Service.deleteByPrimaryKey(${pk.attrname});
+        return Results.success();
+    }
+
+}

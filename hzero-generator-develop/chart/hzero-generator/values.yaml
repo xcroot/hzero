@@ -1,0 +1,43 @@
+# Default values for file-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: registry.choerodon.com.cn/hzero-hzero/hzero-generator
+  pullPolicy: Always
+
+deployment:
+  managementPort: 8091
+
+env:
+  open:
+    SPRING_DATASOURCE_URL: jdbc:mysql://choerodon-mysql.choerodon-devops-dev:3306/hzero_generator?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    SPRING_DATASOURCE_USERNAME: root
+    SPRING_DATASOURCE_PASSWORD: root
+
+service:
+  enable: false
+  type: ClusterIP
+  port: 8090
+  name: hzero-generator
+
+metrics:
+  path: /prometheus
+  group: spring-boot
+
+logs:
+  parser: spring-boot
+
+resources: 
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources,such as Minikube. If you do want to specify resources,uncomment the following
+  # lines,adjust them as necessary,and remove the curly braces after 'resources:'.
+  limits:
+    # cpu: 100m
+    memory: 2Gi
+  requests:
+    # cpu: 100m
+    memory: 1Gi

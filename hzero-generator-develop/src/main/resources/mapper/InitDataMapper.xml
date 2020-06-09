@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hzero.generator.mapper.InitDataMapper">
+    <select id="selectDatabase" resultType="java.lang.String">
+        SELECT iss.SCHEMA_NAME
+		FROM INFORMATION_SCHEMA.SCHEMATA iss
+		WHERE iss.SCHEMA_NAME NOT IN
+		('INFORMATION_SCHEMA','mysql','PERFORMANCE_SCHEMA','test','sys')
+    </select>
+    <update id="createDatabase">
+        create database ${schema}
+    </update>
+    <update id="createDatabaseMysql">
+        create database ${schema} CHARACTER SET utf8mb4 COLLATE utf8mb4_bin
+    </update>
+</mapper>

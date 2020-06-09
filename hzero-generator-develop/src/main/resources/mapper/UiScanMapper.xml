@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.generator.scan.mapper.UiScanMapper">
+
+    <resultMap id="base" type="org.hzero.generator.scan.domain.dto.ExportApiDTO">
+        <id property="uiApiId" column="ui_api_id"/>
+        <result property="uiRoute" column="ui_route"/>
+        <result property="uiCompId" column="ui_comp_id"/>
+        <result property="compCode" column="comp_code"/>
+        <result property="apiLevel" column="api_level"/>
+        <result property="method" column="method"/>
+        <result property="path" column="path"/>
+        <result property="serviceName" column="service_name"/>
+    </resultMap>
+
+    <resultMap id="api" type="org.hzero.generator.scan.domain.UiApi">
+        <id property="uiApiId" column="ui_api_id"/>
+        <result property="uiRoute" column="ui_route"/>
+        <result property="uiCompId" column="ui_comp_id"/>
+        <result property="apiLevel" column="api_level"/>
+        <result property="method" column="method"/>
+        <result property="path" column="path"/>
+        <result property="serviceName" column="service_name"/>
+    </resultMap>
+
+    <resultMap id="component" type="org.hzero.generator.scan.domain.UiComponent">
+        <id property="uiCompId" column="ui_comp_id"/>
+        <result property="compCode" column="comp_code"/>
+        <result property="uiRoute" column="ui_route"/>
+        <result property="compType" column="comp_type"/>
+        <result property="description" column="description"/>
+        <result property="pageBelonged" column="page_belonged"/>
+    </resultMap>
+
+    <resultMap id="componentVO" type="org.hzero.generator.scan.domain.vo.UiComponentVO">
+        <id property="uiCompId" column="ui_comp_id"/>
+        <result property="compCode" column="comp_code"/>
+        <result property="uiRoute" column="ui_route"/>
+        <result property="compType" column="comp_type"/>
+        <result property="description" column="description"/>
+    </resultMap>
+
+    <delete id="clearComp" parameterType="string">
+        delete from hgen_ui_component
+        where ui_route = #{uiRoute} and
+        (comp_type = #{compType}
+        <if test="compType == 'lov'">or comp_type = 'lovView'
+        </if>
+        )
+    </delete>
+
+    <insert id="insertComp" parameterType="org.hzero.generator.scan.domain.UiComponent">
+        insert into
+            hgen_ui_component(ui_route, comp_code, description, comp_type)
+        values (#{uiComponent.uiRoute}, #{uiComponent.compCode}, #{uiComponent.description}, #{uiComponent.compType})
+    </insert>
+
+    <delete id="clearApi" parameterType="string">
+        DELETE from hgen_ui_api
+        where ui_comp_id in(
+            SELECT ui_comp_id FROM hgen_ui_component where ui_route = #{uiRoute}
+            )
+    </delete>
+
+    <select id="getCompByCode" resultMap="component">
+        SELECT ui_comp_id, ui_route, comp_code, description, comp_type FROM hgen_ui_component where comp_code = #{compCode}
+    </select>
+
+    <insert id="insertApi" parameterType="org.hzero.generator.scan.domain.UiApi">
+        insert into
+            hgen_ui_api(ui_comp_id, ui_route, path, method, api_level, service_name)
+        values (#{uiApi.uiCompId}, #{uiApi.uiRoute}, #{uiApi.path}, #{uiApi.method}, #{uiApi.apiLevel}, #{uiApi.serviceName})
+    </insert>
+
+    <select id="listButtonByRoutes" parameterType="list" resultMap="component">
+        select
+        ui_comp_id, comp_code, ui_route, description, comp_type
+        from hgen_ui_component
+        where ui_route in
+        <foreach collection="uiRoutes" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        and comp_type = 'button'
+    </select>
+    <select id="listLovByRoutes" resultMap="component">
+        select
+        ui_comp_id, comp_code, ui_route, description, comp_type
+        from hgen_ui_component
+        where ui_route in
+        <foreach collection="uiRoutes" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        and comp_type = 'lov' or comp_type = 'lovView'
+    </select>
+    <select id="listPromptByRoutes" resultMap="component">
+        select
+        ui_comp_id, comp_code, ui_route, description, comp_type
+        from hgen_ui_component
+        where ui_route in
+        <foreach collection="uiRoutes" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+        and comp_type = 'prompt'
+    </select>
+
+    <resultMap id="MenuMap" type="org.hzero.generator.scan.domain.Menu">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="type" property="type"/>
+        <result column="route" property="route"/>
+        <collection property="childrenMenu" ofType="org.hzero.generator.scan.domain.Menu" select="listChildrenMenu" column="id">
+            <id column="id" property="id"/>
+            <result column="code" property="code"/>
+            <result column="name" property="name"/>
+            <result column="parent_id" property="parentId"/>
+            <result column="type" property="type"/>
+            <result column="route" property="route"/>
+        </collection>
+    </resultMap>
+
+    <select id="listMenu" resultMap="MenuMap">
+        SELECT
+            iu.id,
+            iu.NAME,
+            iu.route
+        FROM
+            iam_menu iu
+        WHERE
+            iu.type = 'root'
+        AND fd_level = #{level}
+    </select>
+
+    <select id="listChildrenMenu" resultMap="MenuMap">
+         SELECT
+            iu.id,
+            iu.NAME,
+            iu.route
+        FROM
+            iam_menu iu
+        WHERE
+           (iu.type = 'menu' or iu.type = 'dir')
+        AND iu.parent_id = #{id}
+    </select>
+
+    <select id="selectApiByUiRoute" resultMap="api">
+        select DISTINCT ui_route, path, method, api_level, service_name
+        from hgen_ui_api where ui_route = #{uiRoute}
+    </select>
+    <select id="selectUiPermissionByPageRoute" resultMap="componentVO">
+        SELECT comp.ui_comp_id, comp.ui_route, comp.comp_code, comp.description, comp.comp_type
+        FROM hgen_ui_component comp
+        where comp.ui_route = #{pageRoute}
+        and comp.comp_type = 'button'
+    </select>
+    <select id="selectUiSqlLovByPageRoute" resultType="string">
+        SELECT lov.lov_code from hpfm_lov lov
+        where lov.lov_type_code = 'SQL' and lov.lov_code in
+        <foreach collection="uiLovs" item="item" open="(" close=")" separator=",">
+            #{item.compCode}
+        </foreach>
+    </select>
+    <select id="select" resultMap="api">
+        select ui_api_id, ui_route, ui_comp_id, api_level, method, path, service_name
+        from hgen_ui_api where api_level = #{uiApi.apiLevel} and ui_comp_id = #{uiApi.uiCompId}
+    </select>
+
+    <resultMap id="promptMap" type="org.hzero.generator.scan.domain.Prompt">
+        <id column="prompt_id" property="promptId"/>
+        <result column="tenant_id" property="tenantId"/>
+        <result column="prompt_key" property="promptKey"/>
+        <result column="prompt_code" property="promptCode"/>
+        <result column="description" property="description"/>
+        <result column="lang" property="lang"/>
+    </resultMap>
+    <select id="selectPromptByKey" resultMap="promptMap">
+        select prompt_id,tenant_id,prompt_key,prompt_code,description,lang
+        from hpfm_prompt
+        where prompt_key = #{promptKey}
+    </select>
+    <select id="selectAllUiPrompt" resultMap="component">
+        SELECT comp.ui_comp_id, comp.ui_route, comp.comp_code, comp.description, comp.comp_type
+        FROM hgen_ui_component comp where comp_type = 'prompt'
+    </select>
+
+</mapper>

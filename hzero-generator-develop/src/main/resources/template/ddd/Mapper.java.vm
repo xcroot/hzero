@@ -1,0 +1,13 @@
+package ${package}.infra.mapper;
+
+import ${package}.domain.entity.${className};
+import io.choerodon.mybatis.common.BaseMapper;
+
+/**
+ * ${comments}Mapper
+ *
+ * @author ${author} ${datetime}
+ */
+public interface ${className}Mapper extends BaseMapper<${className}> {
+
+}

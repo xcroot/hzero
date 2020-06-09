@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+    <service schema="hzero_platform">
+        <data type="sql" driver-class="mysql" order ="1">
+            update hpfm_datasource_route set method = 'get' WHERE ds_route_id = 19;
+        </data>
+        <data type="sql" driver-class="mysql" order="2">
+            update hpfm_datasource_route set method = 'get' WHERE ds_route_id = 20;
+        </data>
+    </service>
+</services>

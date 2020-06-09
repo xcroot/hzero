@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.hzero.generator.mapper.DBInfoMapper">
+
+	<select id="selectDatabase" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT iss.SCHEMA_NAME
+		FROM INFORMATION_SCHEMA.SCHEMATA iss
+		WHERE iss.SCHEMA_NAME NOT IN
+		('INFORMATION_SCHEMA','mysql','PERFORMANCE_SCHEMA','test','sys')
+	</select>
+
+	<select id="selectDatabaseTable" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT TABLE_NAME
+		FROM INFORMATION_SCHEMA.TABLES
+		WHERE TABLE_SCHEMA = #{dbname}
+		AND TABLE_NAME NOT IN ('databasechangelog','databasechangeloglock')
+	</select>
+
+	<select id="selectDatabaseColumn" parameterType="java.lang.String"
+		resultType="map">
+		SELECT
+		CONCAT(
+		'`',
+		LOWER(COLUMN_NAME),
+		'` ',
+		COLUMN_TYPE,
+
+		IF (
+		CHARACTER_SET_NAME IS NULL,
+		'',
+		CONCAT(
+		' CHARACTER SET ',
+		CHARACTER_SET_NAME
+		)
+		),
+		' ',
+
+		IF (
+		IS_NULLABLE = 'YES',
+		'',
+		'NOT '
+		),
+		'NULL',
+
+		IF
+		(
+		LENGTH(COLUMN_COMMENT) > 1,
+		CONCAT(
+		' COMMENT \'',
+		COLUMN_COMMENT,
+		'\''
+		),
+		''
+		),
+		' ',
+		EXTRA
+		) COL_DEF,
+		COLUMNS.TABLE_NAME,
+		LOWER(COLUMN_NAME) AS COLUMN_NAME,
+		COLUMNS.COLUMN_KEY
+		FROM
+		INFORMATION_SCHEMA.COLUMNS
+		WHERE TABLE_SCHEMA =
+		#{dbname}
+		ORDER BY
+		TABLE_NAME,
+		ordinal_position
+	</select>
+
+	<select id="selectDatabaseIndex" parameterType="java.lang.String"
+		resultType="map">
+		SELECT
+		s.TABLE_NAME,
+		s.INDEX_NAME,
+		CONCAT(
+		'ADD ',
+
+		IF
+		(NON_UNIQUE = 1, '', 'UNIQUE'),
+		' INDEX `',
+		INDEX_NAME,
+		'`(',
+		GROUP_CONCAT(
+		'`',
+		LOWER(s.COLUMN_NAME),
+		'`'
+		ORDER BY
+		s.SEQ_IN_INDEX ASC
+		),
+        ') USING ', s.INDEX_TYPE
+		) INDEX_DEF
+		FROM
+		INFORMATION_SCHEMA.STATISTICS s
+		LEFT JOIN
+		INFORMATION_SCHEMA. COLUMNS c ON c.TABLE_NAME =
+		s.TABLE_NAME
+		AND
+		c.COLUMN_NAME = s.COLUMN_NAME
+		AND c.TABLE_SCHEMA = #{dbname}
+		AND c.extra
+		= 'auto_increment'
+		AND c.column_key = 'PRI'
+		WHERE s.TABLE_SCHEMA =
+		#{dbname}
+		AND c.extra IS NULL
+		AND s.TABLE_NAME NOT IN
+		('databasechangelog','databasechangeloglock')
+		AND s.INDEX_NAME NOT IN ('PRIMARY')
+		GROUP BY
+		s.INDEX_NAME,
+		s.TABLE_NAME,
+		s.NON_UNIQUE,
+		s.INDEX_TYPE
+	</select>
+
+	<update id="updateDatabase">
+		${sql}
+	</update>
+
+</mapper>

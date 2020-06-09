@@ -1,0 +1,18 @@
+package ${package}.service.impl;
+
+import org.springframework.stereotype.Service;
+import org.hzero.mybatis.base.impl.BaseRepositoryImpl;
+import ${package}.entity.${className};
+import ${package}.service.${className}Service;
+
+/**
+ * ${comments}服务实现类
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${className}ServiceImpl extends  BaseRepositoryImpl<${className}> implements ${className}Service {
+
+
+}

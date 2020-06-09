@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.hzero.generator.scan.mapper.RoleMapper">
+
+    <resultMap id="roleMap" type="org.hzero.generator.scan.domain.Role">
+        <id column="id" property="id"/>
+        <result column="code" property="code"/>
+        <result column="h_tenant_id" property="tenantId"/>
+        <result column="h_inherit_role_id" property="inheritRoleId"/>
+        <result column="h_level_path" property="levelPath"/>
+    </resultMap>
+    <insert id="insertRolePermission">
+        insert into iam_role_permission (role_id, permission_id, h_create_flag, h_inherit_flag, type)
+        values (#{rolePermission.roleId}, #{rolePermission.permissionSetId}, #{rolePermission.createFlag}, #{rolePermission.inheritFlag}, #{rolePermission.type})
+    </insert>
+    <select id="selectByCode" resultMap="roleMap">
+        select id, code from iam_role where code = #{code}
+    </select>
+    <select id="selectbyTenantIdAndInheritRoleId" resultMap="roleMap">
+        select id, code, h_tenant_id from iam_role where h_tenant_id = #{queryParam.tenantId} and code = #{queryParam.code}
+    </select>
+
+
+</mapper>

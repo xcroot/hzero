@@ -1,0 +1,14 @@
+package ${package}.service;
+
+import org.hzero.mybatis.base.BaseRepository;
+import ${package}.entity.${className};
+/**
+ * ${comments}服务接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${className}Service extends BaseRepository<${className}> {
+
+}
+

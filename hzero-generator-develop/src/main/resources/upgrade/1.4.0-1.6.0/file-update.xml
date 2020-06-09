@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services>
+    <service name="hzero-admin">
+        <file file-path="src/main/resources/application.yml">
+            <file-remove>
+                captcha:
+                  test-disable: false
+            </file-remove>
+            <file-add>
+                my-config:
+                  aa:
+                    cc: bbb
+            </file-add>
+            <file-update source="hzero-admin-15433" target="hzero-admin-15434"/>
+        </file>
+        <file file-path="\src\main\java\org\hzero\admin\config\RouteExtraDataManager.java" replace-path="RouteExtraDataManager.java"/>
+    </service>
+</services>

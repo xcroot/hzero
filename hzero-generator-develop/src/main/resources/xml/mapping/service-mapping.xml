@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--服务映射-->
+<services>
+    <schema-merge>
+        <oracle merge="true" target-schema="" />
+        <mysql merge="false" target-schema="" />
+        <sqlserver merge="false" target-schema="" />
+        <postgresql merge="true" target-schema="" />
+    </schema-merge>
+    <!--  排除更新的表和列(不带列标识忽略整个表)以逗号分隔  -->
+    <exclusion>
+        hpfm_tenant.tenant_id
+    </exclusion>
+    <!--  值替换  -->
+    <value-replace flag="false">
+        <data key="${HZERO}" value="SRM"/>
+    </value-replace>
+    <service name="hzero-all-data" filename="hzero-all-data" schema="all-database" description="全量数据"/>
+    <service name="hzero-platform" filename="hzero_platform" schema="hzero_platform" description="平台服务"/>
+    <service name="hzero-admin" filename="hzero_admin" schema="hzero_admin" description="平台治理服务"/>
+    <service name="hzero-asgard" filename="hzero_asgard" schema="hzero_asgard" description="事务服务"/>
+    <service name="hzero-file" filename="hzero_file" schema="hzero_file" description="文件服务"/>
+    <service name="hzero-message" filename="hzero_message" schema="hzero_message" description="消息服务"/>
+    <service name="hzero-scheduler" filename="hzero_scheduler" schema="hzero_scheduler" description="调度服务"/>
+    <service name="hzero-import" filename="hzero_import" schema="hzero_import" description="通用导入服务"/>
+    <service name="hzero-interface" filename="hzero_interface" schema="hzero_interface" description="接口服务"/>
+    <service name="hzero-transfer" filename="hzero_transfer" schema="hzero_transfer" description="数据分发服务"/>
+    <service name="hzero-workflow-plus" filename="hzero_workflow_plus" schema="hzero_workflow_plus" description="新工作流服务"/>
+    <service name="hzero-report" filename="hzero_report" schema="hzero_report" description="报表服务"/>
+    <service name="hzero-monitor" filename="hzero_monitor" schema="hzero_monitor" description="监控审计服务"/>
+    <service name="hzero-pay" filename="hzero_pay" schema="hzero_pay" description="支付服务"/>
+    <service name="hzero-invoice" filename="hzero_invoice" schema="hzero_invoice" description="发票服务"/>
+    <service name="hzero-im" filename="hzero_im" schema="hzero_im" description="即时通讯服务"/>
+    <service name="hzero-iot" filename="hzero_iot" schema="hzero_iot" description="IoT服务"/>
+    <service name="hzero-alert" filename="hzero_alert" schema="hzero_alert" description="预警服务"/>
+    <service name="hzero-nlp" filename="hzero_nlp" schema="hzero_nlp" description="内容提取服务"/>
+    <service name="hzero-ocr" filename="hzero_ocr" schema="hzero_ocr" description="OCR服务"/>
+    <service name="hzero-webexcel" filename="hzero_webexcel" schema="hzero_webexcel" description="WebExcel服务"/>
+    <service name="hzero-search" filename="hzero_search" schema="hzero_search" description="检索服务"/>
+    <service name="hzero-dpm" filename="hzero_dpm" schema="hzero_dpm" description="数据模型管理服务"/>
+    <service name="hzero-charge" filename="hzero_charge" schema="hzero_charge" description="计费服务"/>
+    <service name="hzero-ebank" filename="hzero_ebank" schema="hzero_ebank" description="银企直联服务"/>
+    <service name="hzero-rule-engine" filename="hzero_rule_engine" schema="hzero_rule_engine" description="规则引擎服务"/>
+</services>

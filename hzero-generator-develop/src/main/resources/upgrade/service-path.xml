@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service-path>
+    <services path-prefix ="C:\Users\work\Hzero\ZY\">
+        <service name="hzero-platform" filename="hzero-platform"/>
+        <service name="hzero-admin"/>
+    </services>
+    <services path-prefix ="C:\Users\work\Hzero\">
+        <service name="hzero-iam"/>
+    </services>
+</service-path>

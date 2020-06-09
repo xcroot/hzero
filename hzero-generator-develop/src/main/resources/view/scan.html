@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HZERO开发助手</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="css/layui.css">
+</head>
+<style>
+    .button-group {
+        margin: 10px;
+    }
+
+    .button-width {
+        width: 100px;
+    }
+
+    .div-left {
+        float: left;
+        width: 40%;
+    }
+
+    .div-right {
+        float: right;
+        width: 55%;
+        margin-right: 5%;
+    }
+</style>
+<body>
+<div style="margin: 0">
+    <div class="layui-inline div-left">
+        <fieldset class="layui-elem-field site-demo-button" style="margin-top: 10px;">
+            <legend>Step1：选择菜单</legend>
+            <div class="layui-row">
+                <div class="layui-col-xs12 layui-inline">
+                    <div class="layui-inline" style="width: 80%">
+                        <div class="layui-row">
+                            <div class="layui-form layui-col-xs12" style="display: flex; align-items: center">
+                                <div style="margin-left: 5%">菜单层级：</div>
+                                <div>
+                                    <select name="interest" lay-filter="level">
+                                        <option value="organization">租户层</option>
+                                        <option value="site">平台层</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row">
+                <div class="layui-col-xs3">
+                    <div class="layui-row">
+                        <div class="demo-tree-more" id="routerData"></div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+    </div>
+    <div class="layui-inline div-right">
+        <fieldset class="layui-elem-field site-demo-button" style="margin-top: 10px;">
+            <legend>Step2：选择功能</legend>
+            <fieldset class="layui-elem-field site-demo-button" style="margin-top: 20px;">
+                <legend>组件扫描</legend>
+                <div class="button-group">
+                    <div style="display: flex; align-items: center">
+                        <div style="display: flex; align-items: center; width: 60%">
+                            <div>前端工程：</div>
+                            <div style="width: 75%">
+                                <input id="resourceDir" type="text" placeholder="请输入路径" class="layui-input">
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-left: 2%">
+                            <div>CLI版本：</div>
+                            <div class="layui-form layui-col-xs6">
+                                <select name="interest" lay-filter="cliVersion">
+                                    <option value=0>旧版</option>
+                                    <option value=1>新版</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="scanButton">权限按钮
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="scanLov">值集&视图
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="scanPrompt">多语言
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="scanApi">API
+                    </button>
+                </div>
+            </fieldset>
+            <fieldset class="layui-elem-field site-demo-button" style="margin-top: 20px;">
+                <legend>权限刷新</legend>
+                <div class="button-group">
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="refreshPermissionSet">刷新权限集
+                    </button>
+                </div>
+            </fieldset>
+            <fieldset class="layui-elem-field site-demo-button" style="margin-top: 20px;">
+                <legend>数据导出</legend>
+                <div class="button-group">
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="exportPermission">导出菜单权限
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="exportLov">导出值集&视图
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="exportPrompt">导出多语言
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="exportNewPrompt">导出差异多语言
+                    </button>
+                    <button type="button" class="layui-btn layui-btn-normal layui-btn-sm layui-btn-radius button-width"
+                            lay-click="exportAllNewPrompt">全部差异多语言
+                    </button>
+                </div>
+            </fieldset>
+        </fieldset>
+    </div>
+</div>
+<script src="libs/jquery.min.js"></script>
+<script src="libs/layui.all.js"></script>
+<script src="js/scan.js"></script>
+</body>
+</html>

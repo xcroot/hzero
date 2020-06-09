@@ -1,0 +1,13 @@
+package ${package}.domain.repository;
+
+import org.hzero.mybatis.base.BaseRepository;
+import ${package}.domain.entity.${className};
+
+/**
+ * ${comments}资源库
+ *
+ * @author ${author} ${datetime}
+ */
+public interface ${className}Repository extends BaseRepository<${className}> {
+    
+}

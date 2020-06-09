@@ -1,0 +1,98 @@
+package ${package}.domain.entity;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.validation.constraints.NotBlank;
+import io.choerodon.mybatis.domain.AuditDomain;
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+#if(${hasDate})
+import java.util.Date;
+#end
+import io.choerodon.mybatis.annotation.ModifyAudit;
+import io.choerodon.mybatis.annotation.VersionAudit;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ * ${comments}
+ *
+ * @author ${author} ${datetime}
+ */
+@ApiModel("${comments}")
+@VersionAudit
+@ModifyAudit
+@JsonInclude(value = JsonInclude.Include.NON_NULL)
+@Table(name = "${tableName}")
+public class ${className} extends AuditDomain {
+
+#foreach ($column in $columns)
+#if($column.columnName != "object_version_number" && $column.columnName != "creation_date" && 
+$column.columnName != "created_by" && $column.columnName != "last_update_date" && $column.columnName != "last_updated_by")
+    public static final String FIELD_$column.upperColumnName = "$column.attrname";
+#end
+#end
+
+    //
+    // 业务方法(按public protected private顺序排列)
+    // ------------------------------------------------------------------------------
+
+    //
+    // 数据库字段
+    // ------------------------------------------------------------------------------
+
+
+#foreach ($column in $columns)
+#if($column.columnName != "object_version_number" && $column.columnName != "creation_date" && 
+$column.columnName != "created_by" && $column.columnName != "last_update_date" && $column.columnName != "last_updated_by")
+#if($column.columnName == $pk.columnName)
+    @ApiModelProperty("$column.comments")
+    @Id
+    @GeneratedValue
+#else
+#if($column.nullAble == 'NO')
+    @ApiModelProperty(value = "$column.comments",required = true)
+#if($column.attrType == 'String')
+    @NotBlank
+#else  
+    @NotNull
+#end
+#else
+   @ApiModelProperty(value = "$column.comments")    
+#end
+#end
+    private $column.attrType $column.attrname;
+#end
+#end
+
+	//
+    // 非数据库字段
+    // ------------------------------------------------------------------------------
+
+    //
+    // getter/setter
+    // ------------------------------------------------------------------------------
+
+#foreach ($column in $columns)
+#if($column.columnName != "object_version_number" && $column.columnName != "creation_date" && 
+$column.columnName != "created_by" && $column.columnName != "last_update_date" && $column.columnName != "last_updated_by")
+    /**
+     * @return $column.comments
+     */
+	public $column.attrType get${column.attrName}() {
+		return $column.attrname;
+	}
+
+	public void set${column.attrName}($column.attrType $column.attrname) {
+		this.$column.attrname = $column.attrname;
+	}
+#end	
+#end
+
+}
