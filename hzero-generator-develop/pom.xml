@@ -28,7 +28,7 @@
 		<poi.version>4.0.0</poi.version>
 		<dynamic.datasource.version>2.2.2</dynamic.datasource.version>
 		<powermock.version>1.7.4</powermock.version>
-		<jackson.version>2.9.9</jackson.version>
+		<jackson.version>2.9.10.8</jackson.version>
 	</properties>
 
 	<dependencies>
