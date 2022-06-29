@@ -25,7 +25,7 @@
 		<commons.configuration.version>1.10</commons.configuration.version>
 		<fastjson.version>1.2.31</fastjson.version>
 		<velocity.version>1.7</velocity.version>
-		<poi.version>4.0.0</poi.version>
+		<poi.version>4.1.1</poi.version>
 		<dynamic.datasource.version>2.2.2</dynamic.datasource.version>
 		<powermock.version>1.7.4</powermock.version>
 		<jackson.version>2.9.9</jackson.version>
